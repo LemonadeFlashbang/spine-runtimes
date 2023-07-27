@@ -1,3 +1,32 @@
+/******************************************************************************
+ * Spine Runtimes License Agreement
+ * Last updated September 24, 2021. Replaces all prior versions.
+ *
+ * Copyright (c) 2013-2021, Esoteric Software LLC
+ *
+ * Integration of the Spine Runtimes into software or otherwise creating
+ * derivative works of the Spine Runtimes is permitted under the terms and
+ * conditions of Section 2 of the Spine Editor License Agreement:
+ * http://esotericsoftware.com/spine-editor-license
+ *
+ * Otherwise, it is permitted to integrate the Spine Runtimes into software
+ * or otherwise create derivative works of the Spine Runtimes (collectively,
+ * "Products"), provided that each user of the Products must obtain their own
+ * Spine Editor license and redistribution of the Products in any form must
+ * include this license and copyright notice.
+ *
+ * THE SPINE RUNTIMES ARE PROVIDED BY ESOTERIC SOFTWARE LLC "AS IS" AND ANY
+ * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+ * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+ * DISCLAIMED. IN NO EVENT SHALL ESOTERIC SOFTWARE LLC BE LIABLE FOR ANY
+ * DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+ * (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES,
+ * BUSINESS INTERRUPTION, OR LOSS OF USE, DATA, OR PROFITS) HOWEVER CAUSED AND
+ * ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
+ * THE SPINE RUNTIMES, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ *****************************************************************************/
+
 import type { BlendMode, Bone, Event, NumberArrayLike, SkeletonData, Slot, TextureAtlas, TrackEntry } from "@esotericsoftware/spine-core";
 import {
 	AnimationState,
@@ -93,23 +122,8 @@ export class Spine extends Container {
 		this.state = new AnimationState(animData);
 		this.autoUpdate = options?.autoUpdate ?? true;
 		this.slotMeshFactory = options?.slotMeshFactory ?? ((): ISlotMesh => new SlotMesh());
-
-
-		/**
-		  * This is locked behind https://github.com/pixijs/pixijs/issues/8957
-		  * I don't want to make a custom event emitter and do `this.spineEvents.on` because that's just as "far" as `this.state.addListener`
-		  * So, until pixi fixes the custom event system, I'll stick to spine native events. - @miltoncandelero
-
-			this.spineListeners = {
-				complete: (trackEntry) => this.emit("complete", trackEntry),
-				dispose: (trackEntry) => this.emit("dispose", trackEntry),
-				end: (trackEntry) => this.emit("end", trackEntry),
-				event: (trackEntry, event) => this.emit("event", trackEntry, event),
-				interrupt: (trackEntry) => this.emit("interrupt", trackEntry),
-				start: (trackEntry) => this.emit("start", trackEntry),
-			};
-			this.state.addListener(this.spineListeners);
-		*/
+		this.skeleton.setToSetupPose();
+		this.skeleton.updateWorldTransform();
 	}
 
 	public update (deltaSeconds: number): void {
